@@ -63,3 +63,9 @@ def test_load_catalogs_returns_clean_frames(tmp_path):
     assert pd.isna(buy.loc[0, "price"])
     assert buy.loc[0, "manufacturer"] == "sony"
     assert mapping.iloc[0].tolist() == [1, 9]
+
+
+def test_extract_model_codes_joins_hyphenated_and_slashed_codes():
+    codes = extract_model_codes("Sony LCJ-THC/B Jacket Case - LCJ-THC/W")
+    assert {"lcjthcb", "lcjthcw"} <= codes
+    assert "cli221" in extract_model_codes("Canon CLI-221 Black Ink Cartridge")

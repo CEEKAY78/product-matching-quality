@@ -19,6 +19,7 @@ COLUMNS = ["id", "name", "description", "manufacturer", "price"]
 
 _PUNCT = re.compile(r"[^a-z0-9]+")
 _MODEL_CODE = re.compile(r"^(?=.*[a-z])(?=.*\d)[a-z0-9]{4,}$")
+_HYPHENATED = re.compile(r"\b\w+(?:[-/]\w+)+\b")  # LCJ-THC/W, CLI-221, 010-10723-06
 
 
 def parse_price(value: object) -> float:
@@ -45,7 +46,16 @@ def extract_model_codes(name: object) -> set[str]:
     Model codes are the strongest matching signal in retail catalogs: two listings sharing a
     code are almost always the same product.
     """
-    return {tok for tok in normalize_text(name).split() if _MODEL_CODE.match(tok)}
+    if name is None or (isinstance(name, float) and math.isnan(name)):
+        return set()
+    text = str(name)
+    codes = {tok for tok in normalize_text(text).split() if _MODEL_CODE.match(tok)}
+    # hyphenated / slashed tokens are codes even without digits: LCJ-THC/W -> lcjthcw
+    for raw in _HYPHENATED.findall(text):
+        joined = re.sub(r"[-/]", "", raw).lower()
+        if len(joined) >= 4 and not joined.isdigit():
+            codes.add(joined)
+    return codes
 
 
 def extract_brand(name: object) -> str:
