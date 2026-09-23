@@ -109,3 +109,7 @@ reports/        markdown reports, figures, mapping_review_queue.csv
   the two names share no tokens at all.
 - Transfer to Amazon-Google, the sibling benchmark with the same schema, to check the
   features generalise.
+
+## License
+
+MIT. The Abt-Buy dataset is distributed by Leipzig University for research use and is downloaded, not redistributed, by this repository.
