@@ -17,8 +17,10 @@ import pandas as pd
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+from sklearn.base import clone  # noqa: E402
 from sklearn.inspection import permutation_importance  # noqa: E402
 from sklearn.metrics import confusion_matrix, precision_recall_curve  # noqa: E402
+from sklearn.model_selection import GroupKFold, cross_val_predict  # noqa: E402
 
 from pmq.blocking import build_candidates, evaluate_blocking  # noqa: E402
 from pmq.data import load_catalogs  # noqa: E402
@@ -104,9 +106,24 @@ def main() -> None:
     fp = best_scores[(best_scores["label"] == 0) & (best_scores["pred"] == 1)].nlargest(8, "proba")
     uncertain = best_scores[(best_scores["proba"] > 0.3) & (best_scores["proba"] < 0.7)]
 
-    # mapping quality monitoring: score every gold pair with out-of-sample probabilities
-    # (test pairs only) and list the least plausible ones - these are review candidates
-    suspicious = best_scores[best_scores["label"] == 1].nsmallest(8, "proba")
+    # mapping quality monitoring: score EVERY gold pair with out-of-fold probabilities
+    # (GroupKFold over all candidates, so no pair is scored by a model that saw it) and
+    # write a review queue sorted by ascending confidence for data stewards
+    oof = cross_val_predict(
+        clone(best),
+        feats[FEATURE_COLUMNS].to_numpy(),
+        feats["label"].to_numpy(),
+        cv=GroupKFold(n_splits=5),
+        groups=feats["idAbt"],
+        method="predict_proba",
+    )[:, 1]
+    queue = feats[["idAbt", "idBuy", "label"]].assign(proba=oof.round(4))
+    queue = queue[queue["label"] == 1].sort_values("proba").reset_index(drop=True)
+    queue["abt_name"] = queue["idAbt"].map(abt.set_index("id")["name"])
+    queue["buy_name"] = queue["idBuy"].map(buy.set_index("id")["name"])
+    queue.to_csv(REPORTS / "mapping_review_queue.csv", index=False)
+    suspicious = queue.head(8)
+    n_flagged = int((queue["proba"] < threshold).sum())
 
     parts = [
         "# Model results\n",
@@ -131,7 +148,10 @@ def main() -> None:
         "\n### False positives (non-matches the model accepted)\n",
         "\n".join(f"- p={r.proba:.2f} " + describe_pair(r, abt, buy) for r in fp.itertuples()),
         "\n### Mapping quality monitoring: gold pairs with the lowest model confidence\n",
-        "These are the existing mappings a data steward should re-check first.\n",
+        f"All {len(queue)} gold pairs in the candidate set were scored out-of-fold; "
+        f"{n_flagged} fall below the decision threshold and are written to "
+        "`reports/mapping_review_queue.csv` (sorted by confidence) for a data steward. "
+        "Lowest eight:\n",
         "\n".join(
             f"- p={r.proba:.2f} " + describe_pair(r, abt, buy) for r in suspicious.itertuples()
         ),

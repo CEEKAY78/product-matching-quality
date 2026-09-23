@@ -1,6 +1,6 @@
 # Model results
 
-Pipeline run time: 49s on CPU. Split: 70/30 by Abt product id, 16185 train / 6908 test pairs.
+Pipeline run time: 55s on CPU. Split: 70/30 by Abt product id, 16185 train / 6908 test pairs.
 
 ## Blocking
 | metric | value |
@@ -92,13 +92,13 @@ Uncertain pairs (0.3 < p < 0.7): 134 of 6908 test pairs, 69 of them true matches
 
 ### Mapping quality monitoring: gold pairs with the lowest model confidence
 
-These are the existing mappings a data steward should re-check first.
+All 1089 gold pairs in the candidate set were scored out-of-fold; 216 fall below the decision threshold and are written to `reports/mapping_review_queue.csv` (sorted by confidence) for a data steward. Lowest eight:
 
-- p=0.00 `iHome Black Clock Radio Audio System For iPod - IH9BR` (nan) vs `IH9B6R BLACK ALARM CLOCK F/IPODPERPCHARGES DOCKED IPOD REMOTE CONTROL` (nan)
-- p=0.01 `Garmin Nuvi 360 010-10723-06 Black 12 Volt Adapter Cable - 0101072306` (47.0) vs `Garmin Cigarette Lighter Adapter for GPS` (nan)
-- p=0.02 `LG Pearl Gray XL Capacity Electric Dryer - DLE5955G` (nan) vs `LG 7.3 cu.ft. Front Control, ST Drum,Chrome Door Trim (Pearl Gray)` (nan)
-- p=0.02 `Sanus 13' - 30' VisionMount Flat Panel TV Silver Wall Mount - VMFS` (39.99) vs `Sanus Flat Panel TV Wall Mount - VMF` (nan)
-- p=0.02 `Panasonic Genius Countertop Microwave In White - NNH965WH` (nan) vs `Panasonic NN-H965WF Luxury Full-Size 2-1/5-Cubic-Foot 1250-Watt Microwave Oven- White` (nan)
-- p=0.02 `Monster Mini-To-Mini iCable For Car - AICMINIIP3S` (15.0) vs `Monster Cable iCable A IC MINI IP-3 S Audio Stereo Cable - 123870` (nan)
-- p=0.02 `Belkin Cush Top For Computer Laptop - F8N044ORG` (nan) vs `Belkin Orange Cushtop` (nan)
-- p=0.02 `LG 24' LDS4821BB Semi Integrated Built In Black Dishwasher - LDS4821BK` (nan) vs `LG Semi-Integrated Electronic Panel with Digital Status Display` (nan)
+- p=0.00 `Bose Second Zone Remote - PMC2` (149.0) vs `Bose PMCII Remote Control` (145.37)
+- p=0.00 `Whirlpool White Front Load Washer - WFW9200SWH` (nan) vs `Whirlpool 27' DUET WASHER HORIZ AXIS WP` (910.91)
+- p=0.00 `Garmin GPS Carrying Case - Black Finish - 0101070400` (30.0) vs `Garmin Lightweight GPS Case - 010-10704-00` (nan)
+- p=0.00 `LG DLEX7177RM Cherry Red XL Capacity Electric SteamDryer - DLEX7177RD` (nan) vs `LG 27' Front-Load Electric Dryer with 7.3 cu. ft. Capacity` (nan)
+- p=0.00 `Canon Optura/Elura Accessory Kit - ACCESSORYKIT` (nan) vs `Canon Mini DV Camcorder Starter Kit - 9582A008` (69.95)
+- p=0.00 `Sony DVD Remote Control For PS2 - Black Finish - 711719707608` (19.0) vs `PlayStation 2 DVD Remote - 97076` (nan)
+- p=0.00 `Pioneer Black Premier Single CD Receiver - DEHP700BT` (308.0) vs `Pioneer DEHP400UB Car Audio Player` (134.32)
+- p=0.00 `Canon Black 21.1 Megapixel EOS Digital SLR Camera Body - EOS5DMARKIIBODY` (2699.0) vs `Canon EOS 5D Mark II Digital SLR Camera - 2764B003` (3699.99)
