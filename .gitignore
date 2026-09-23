@@ -1,0 +1,17 @@
+# local-only notes (interview prep) - never committed
+_local/
+
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# raw data is downloaded by scripts/download_data.py
+data/raw/
+data/processed/
+*.zip
+
+.vscode/
+.idea/
