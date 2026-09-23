@@ -66,7 +66,7 @@ Brand vocabularies differ ("sony" vs "sony corp"), which is why brand match is a
 | denon | 19 | 19 |
 | weber | 18 | 17 |
 | pioneer | 18 | 15 |
-| yamaha | 14 | 14 |
+| sirius | 13 | 15 |
 
 ## 03_mapping_cardinality
 

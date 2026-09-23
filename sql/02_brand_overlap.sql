@@ -6,5 +6,5 @@ SELECT coalesce(a.manufacturer, b.manufacturer) AS brand,
        coalesce(n_abt, 0) AS n_abt,
        coalesce(n_buy, 0) AS n_buy
 FROM a FULL OUTER JOIN b USING (manufacturer)
-ORDER BY n_abt + n_buy DESC
+ORDER BY n_abt + n_buy DESC, brand
 LIMIT 15;
